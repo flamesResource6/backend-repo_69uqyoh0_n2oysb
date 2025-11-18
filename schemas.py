@@ -11,10 +11,10 @@ Model name is converted to lowercase for the collection name:
 - BlogPost -> "blogs" collection
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, Field, HttpUrl
+from typing import Optional, List
 
-# Example schemas (replace with your own):
+# Example schemas (kept for reference):
 
 class User(BaseModel):
     """
@@ -38,11 +38,29 @@ class Product(BaseModel):
     category: str = Field(..., description="Product category")
     in_stock: bool = Field(True, description="Whether product is in stock")
 
-# Add your own schemas here:
-# --------------------------------------------------
+# Portfolio-specific schemas
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Project(BaseModel):
+    """
+    Freelance/project portfolio items
+    Collection: "project"
+    """
+    title: str = Field(..., description="Project title")
+    description: str = Field(..., description="Short summary")
+    tags: List[str] = Field(default_factory=list, description="Tech used")
+    link: Optional[HttpUrl] = Field(None, description="Live URL or repo")
+    image: Optional[HttpUrl] = Field(None, description="Thumbnail image URL")
+    featured: bool = Field(False, description="Show on homepage")
+
+class BlogPost(BaseModel):
+    """
+    Simple blog posts
+    Collection: "blogpost"
+    """
+    title: str = Field(..., description="Post title")
+    excerpt: str = Field(..., description="Short excerpt for cards")
+    content: str = Field(..., description="Markdown or HTML content")
+    cover_image: Optional[HttpUrl] = Field(None, description="Hero image URL")
+    author: str = Field(..., description="Author name")
+    slug: str = Field(..., description="URL slug")
+    published: bool = Field(True, description="Is published")
